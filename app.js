@@ -1,8 +1,27 @@
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, onValue, set } from "firebase/database";
+
+// Firebase Configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyAOoqE6xdLwtvsYFmIiviTx9CBkhZiNYCI",
+    authDomain: "kebabathron.firebaseapp.com",
+    projectId: "kebabathron",
+    storageBucket: "kebabathron.firebasestorage.app",
+    messagingSenderId: "137494300200",
+    appId: "1:137494300200:web:b0a838442acde0a699971d",
+    databaseURL: "https://kebabathron-default-rtdb.europe-west1.firebasedatabase.app"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const stateRef = ref(db, 'invitation/chars');
+
 document.addEventListener('DOMContentLoaded', () => {
 
     const state = {
         charStates: {
-            1: 'idle', // idle, ja, nej
+            1: 'idle',
             2: 'idle',
             3: 'idle'
         }
@@ -20,7 +39,19 @@ document.addEventListener('DOMContentLoaded', () => {
         3: document.getElementById('status-3')
     };
 
-    // Init
+    // Listen for changes in Firebase (Real-time Sync)
+    onValue(stateRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            Object.keys(data).forEach(id => {
+                updateUI(id, data[id]);
+                state.charStates[id] = data[id];
+            });
+            checkVictory();
+        }
+    });
+
+    // Event Listeners
     Object.keys(selectors).forEach(id => {
         selectors[id].addEventListener('click', () => handleCharClick(id));
     });
@@ -34,14 +65,15 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentState === 'ja') nextState = 'nej';
         else if (currentState === 'nej') nextState = 'idle';
 
-        updateCharState(id, nextState);
+        // Update Firebase (Cloud update)
+        set(ref(db, `invitation/chars/${id}`), nextState);
     }
 
-    function updateCharState(id, newState) {
-        state.charStates[id] = newState;
-
+    function updateUI(id, newState) {
         const selector = selectors[id];
         const label = labels[id];
+
+        if (!selector || !label) return;
 
         // Reset
         selector.classList.remove('selected-green', 'selected-red');
@@ -56,8 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
             label.innerText = 'Nej 🌈';
             label.style.color = 'var(--neon-red)';
         }
-
-        checkVictory();
     }
 
     function checkVictory() {
@@ -97,7 +127,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function stopParticles() {
         clearInterval(particleInterval);
         particleInterval = null;
-        document.getElementById('particles-container').innerHTML = '';
+        if (document.getElementById('particles-container')) {
+            document.getElementById('particles-container').innerHTML = '';
+        }
     }
 
 });
