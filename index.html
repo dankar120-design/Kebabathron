@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="sv">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kebabathron Inbjudan</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Retro font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Vt323&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div id="game-container">
+
+        <header class="retro-header">
+            Inbjudan:<br>Kebabathron Strategic Planning<br><span class="beta-text">(Beta Mode)</span>
+        </header>
+
+        <div class="main-scene" id="scene">
+            <!-- Full background image showing time and place info -->
+            <img src="assets/kebabathron_portrait.png" alt="Office Scene" class="background-layer" id="bg-img">
+        </div>
+
+        <div class="ui-bar">
+            <div class="status-line">
+                <span id="action-text">OSA genom att välja din karaktär</span>
+            </div>
+
+            <div class="character-selector">
+                <div class="selector-slot">
+                    <div class="char-portrait" id="select-char-1" data-id="1">
+                        <div class="face-icon face-1"></div>
+                    </div>
+                    <div class="status-label" id="status-1"></div>
+                </div>
+
+                <div class="selector-slot">
+                    <div class="char-portrait" id="select-char-2" data-id="2">
+                        <div class="face-icon face-2"></div>
+                    </div>
+                    <div class="status-label" id="status-2"></div>
+                </div>
+
+                <div class="selector-slot">
+                    <div class="char-portrait" id="select-char-3" data-id="3">
+                        <div class="face-icon face-3"></div>
+                    </div>
+                    <div class="status-label" id="status-3"></div>
+                </div>
+            </div>
+
+            <div class="instruction-sub">Gör ditt val</div>
+        </div>
+
+    </div>
+
+    <!-- Celebration Overlay -->
+    <div id="celebration-overlay" class="hidden">
+        <div class="victory-text">Kebabathron 9/1 confirmed</div>
+        <div class="falling-particles" id="particles-container"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
