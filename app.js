@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Listen for changes in Firebase (Real-time Sync)
     onValue(stateRef, (snapshot) => {
+        console.log("Firebase connection established, data received:", snapshot.val());
         const data = snapshot.val();
         if (data) {
             Object.keys(data).forEach(id => {
@@ -49,6 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             checkVictory();
         }
+    }, (error) => {
+        console.error("Firebase read error:", error);
+        alert("Kunde inte läsa från databasen. Kontrollera säkerhetsregler.");
     });
 
     // Event Listeners
@@ -65,8 +69,14 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentState === 'ja') nextState = 'nej';
         else if (currentState === 'nej') nextState = 'idle';
 
+        console.log(`Attempting to set char ${id} to ${nextState}`);
         // Update Firebase (Cloud update)
-        set(ref(db, `invitation/chars/${id}`), nextState);
+        set(ref(db, `invitation/chars/${id}`), nextState)
+            .then(() => console.log("Success!"))
+            .catch((error) => {
+                console.error("Firebase write error:", error);
+                alert("Kunde inte spara valet: " + error.message);
+            });
     }
 
     function updateUI(id, newState) {
